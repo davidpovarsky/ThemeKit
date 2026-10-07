@@ -9,7 +9,6 @@ on:
       - "previews"
       - "Snapshots (on-demand)"
     types:
-      - requested
       - in_progress
       - completed
 
