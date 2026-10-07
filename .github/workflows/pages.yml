@@ -17,6 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -33,13 +34,37 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - uses: actions/checkout@v4
 
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
 
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -49,6 +74,14 @@ jobs:
 
       # Starlight site → website/dist. The prebuild hook (sync-screenshots.mjs)
       # copies component screenshots from Screenshots/ into the build.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Build Starlight site
         working-directory: website
         run: |
@@ -58,6 +91,14 @@ jobs:
       # DocC API reference → served under /ThemeKit/api/. The base path must match
       # or assets 404. Output is nested inside the Starlight build so a single
       # artifact carries both.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Build DocC (static hosting) into /api
         run: |
           swift package --disable-sandbox \
@@ -69,6 +110,14 @@ jobs:
 
       # DocC's static-hosting root doesn't auto-open the module, so /api/ would land
       # on a blank shell. Redirect it straight to the docs.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Redirect /api root → documentation
         run: |
           cat > ./website/dist/api/index.html <<'HTML'
@@ -84,6 +133,14 @@ jobs:
       # A second archive: DocC static-hosting is per-module and `@_exported` does not
       # carry re-exported symbols into ThemeKit's graph, so the engine reference lives
       # at its own base path.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Build DocC for ThemeKitCore into /api-core
         run: |
           swift package --disable-sandbox \
@@ -93,6 +150,14 @@ jobs:
             --hosting-base-path ThemeKit/api-core \
             --output-path ./website/dist/api-core
 
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Redirect /api-core root → documentation
         run: |
           cat > ./website/dist/api-core/index.html <<'HTML'
@@ -104,11 +169,27 @@ jobs:
           <p>Redirecting to the <a href="./documentation/themekitcore/">ThemeKitCore API reference</a>…</p>
           HTML
 
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./website/dist
 
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
