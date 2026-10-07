@@ -32,8 +32,24 @@ jobs:
     name: Visual regression (iPhone 17, pinned)
     runs-on: macos-15
     steps:
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - uses: actions/checkout@v4
 
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -41,6 +57,14 @@ jobs:
 
       # Boot a known iPhone 17 by UDID so the env we inject lands in the exact
       # simulator xcodebuild runs the tests on.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Boot iPhone 17
         id: sim
         run: |
@@ -56,6 +80,14 @@ jobs:
       # Env vars set on the shell do NOT cross into the Simulator's test process
       # (docs/SNAPSHOT-TESTING.md). launchctl setenv on the booted device's
       # launchd DOES propagate to processes it launches — the verified path.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Inject snapshot gate into the simulator
         run: |
           UDID="${{ steps.sim.outputs.udid }}"
@@ -67,6 +99,14 @@ jobs:
       # Run the whole ThemeKit test target: snapshot cases self-skip unless
       # RUN_SNAPSHOTS=1 (now injected), so this is the visual suite. Non-blocking:
       # always exit 0, surface any diff as a ::warning + an artifact.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Run the snapshot suite
         run: |
           set +e
@@ -84,6 +124,15 @@ jobs:
           fi
           exit 0
 
+      - name: Live Activity · refresh
+        if: always()
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Upload result bundle + any diffs
         if: always()
         uses: actions/upload-artifact@v4
