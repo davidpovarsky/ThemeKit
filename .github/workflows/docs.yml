@@ -10,6 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -21,9 +22,25 @@ jobs:
     name: Build DocC
     runs-on: macos-15
     steps:
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - uses: actions/checkout@v4
 
       # The package needs Swift 6.2; pick the newest Xcode the runner ships.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -34,6 +51,14 @@ jobs:
       # emits absolute /js//css asset URLs that 404 under the subpath. Download the
       # artifact, serve `docs-out` (e.g. `python3 -m http.server`), and open
       # `/themekit/` or `/themekitcore/`.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Build DocC (static hosting)
         run: |
           swift package --disable-sandbox \
@@ -52,9 +77,25 @@ jobs:
       # DocC emits operator pages whose filenames contain ':' (e.g.
       # `!=(_:_:).json`), which actions/upload-artifact rejects. Tar the site into
       # a single file first so those names live inside the archive.
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Archive DocC site
         run: tar -czf ThemeKit-docc.tgz -C docs-out .
 
+      - name: Live Activity · refresh
+        uses: davidpovarsky/github-automation/live-refresh@main
+        continue-on-error: true
+        with:
+          event: refresh
+          device_id: ${{ secrets.NOTIFY_DEVICE_ID }}
+          token: ${{ secrets.NOTIFY_DEVICE_TOKEN }}
+          github_token: ${{ github.token }}
       - name: Upload DocC artifact
         uses: actions/upload-artifact@v4
         with:
